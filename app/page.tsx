@@ -145,7 +145,16 @@ export default function Home() {
                   <small>LOCAL SOURCE</small>
                   <span title={solution.source}>DSUGamePortal</span>
                 </div>
-                <a href={solution.href} target="_blank" rel="noreferrer">
+                <a
+                  href={solution.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(event) => {
+                    if (window.location.hostname === "portal.arfab.kr") {
+                      event.currentTarget.href = "http://dsu.arfab.kr";
+                    }
+                  }}
+                >
                   포털 열기 <span>↗</span>
                 </a>
               </div>
