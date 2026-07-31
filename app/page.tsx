@@ -38,6 +38,30 @@ const solutions = [
     status: "연결됨",
     tags: ["Equipment", "Rental", "Flask"],
   },
+  {
+    id: "army-ocr",
+    name: "Army OCR",
+    description:
+      "문서와 이미지에서 텍스트를 인식하고 결과를 관리·활용하는 AI OCR 웹 애플리케이션입니다.",
+    category: "commercial",
+    icon: "OC",
+    href: "http://localhost:8001",
+    source: "F:\\Create with Claude\\OCR",
+    status: "연결됨",
+    tags: ["OCR", "Document AI", "FastAPI"],
+  },
+  {
+    id: "live2d-chatbot",
+    name: "Live2D ChatBot",
+    description:
+      "대학 지식자료를 기반으로 답변하고 음성·캐릭터 인터페이스를 제공하는 AI 챗봇입니다.",
+    category: "commercial",
+    icon: "CB",
+    href: "http://localhost:8002",
+    source: "F:\\Create with Claude\\ChatBot",
+    status: "연결됨",
+    tags: ["ChatBot", "RAG", "Live2D"],
+  },
 ];
 
 export default function Home() {

@@ -52,6 +52,18 @@ echo Starting VFX Equipment Management service...
 start "VFX Equipment Management Server" /min cmd.exe /c call "%PORTAL_DIR%_start_equipment_service.bat"
 
 :EQUIPMENT_READY
+netstat -ano | findstr ":8001" | findstr "LISTENING" >nul
+if not errorlevel 1 goto OCR_READY
+echo Starting Army OCR service...
+start "Army OCR Server" /min cmd.exe /c call "%PORTAL_DIR%_start_ocr_service.bat"
+
+:OCR_READY
+netstat -ano | findstr ":8002" | findstr "LISTENING" >nul
+if not errorlevel 1 goto CHATBOT_READY
+echo Starting Live2D ChatBot service...
+start "Live2D ChatBot Server" /min cmd.exe /c call "%PORTAL_DIR%_start_chatbot_service.bat"
+
+:CHATBOT_READY
 echo Starting AI Solution Portal...
 start "AI Solution Portal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_portal_service.bat"
 
