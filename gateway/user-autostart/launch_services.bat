@@ -2,8 +2,18 @@
 setlocal
 
 netstat -ano | findstr ":5173" | findstr "LISTENING" >nul
-if not errorlevel 1 goto GATEWAY_CHECK
+if not errorlevel 1 goto DSU_CHECK
 start "ARFab Internal Server" /min cmd.exe /c call "%~dp0arfab_watchdog.bat"
+
+:DSU_CHECK
+netstat -ano | findstr ":8080 " | findstr "LISTENING" >nul
+if not errorlevel 1 goto EQUIPMENT_CHECK
+start "DSU Game Portal" /min cmd.exe /c call "%~dp0dsu_watchdog.bat"
+
+:EQUIPMENT_CHECK
+netstat -ano | findstr ":8000 " | findstr "LISTENING" >nul
+if not errorlevel 1 goto GATEWAY_CHECK
+start "VFX Equipment Management" /min cmd.exe /c call "%~dp0equipment_watchdog.bat"
 
 :GATEWAY_CHECK
 netstat -ano | findstr ":80 " | findstr "LISTENING" >nul
