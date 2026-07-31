@@ -49,7 +49,6 @@ export default defineConfig(async () => {
       port: 3000,
       strictPort: true,
       allowedHosts: ["localhost", "portal.arfab.kr"],
-      hmr: { clientPort: 80 },
       ...(isCodexSeatbeltSandbox
         ? { watch: { useFsEvents: false, usePolling: true } }
         : {}),
