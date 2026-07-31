@@ -1,4 +1,21 @@
-# vinext-starter
+# AI Solution Portal
+
+## 컴퓨터에서 실행
+
+`AI_Solution_Portal_실행.bat`을 더블클릭합니다.
+
+실행 파일은 AI Solution Portal과 DSU Game Portal 서버를 준비한 뒤
+`http://localhost:3000`의 포털 화면을 먼저 엽니다.
+
+포털에서 다음 순서로 DSU Game Portal을 실행합니다.
+
+1. `프로젝트(사업화)` 카테고리 선택
+2. `DSU Game Portal` 카드 확인
+3. `포털 열기` 선택
+
+사용을 마치면 `AI_Solution_Portal_종료.bat`을 실행합니다.
+
+## 개발 정보
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and

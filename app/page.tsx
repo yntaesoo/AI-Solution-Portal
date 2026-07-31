@@ -146,7 +146,7 @@ export default function Home() {
                   <span title={solution.source}>DSUGamePortal</span>
                 </div>
                 <a href={solution.href} target="_blank" rel="noreferrer">
-                  실행하기 <span>↗</span>
+                  포털 열기 <span>↗</span>
                 </a>
               </div>
             </article>
