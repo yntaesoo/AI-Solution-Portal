@@ -46,6 +46,12 @@ start "ARFab Internal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_arfab_ser
 echo Starting DSU Game Portal service...
 start "DSU Game Portal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_dsu_service.bat"
 
+netstat -ano | findstr ":8000" | findstr "LISTENING" >nul
+if not errorlevel 1 goto EQUIPMENT_READY
+echo Starting VFX Equipment Management service...
+start "VFX Equipment Management Server" /min cmd.exe /c call "%PORTAL_DIR%_start_equipment_service.bat"
+
+:EQUIPMENT_READY
 echo Starting AI Solution Portal...
 start "AI Solution Portal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_portal_service.bat"
 

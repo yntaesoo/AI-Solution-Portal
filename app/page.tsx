@@ -20,9 +20,23 @@ const solutions = [
     category: "commercial",
     icon: "DG",
     href: "http://localhost:8080",
+    publicHref: "http://dsu.arfab.kr",
     source: "F:\\create with claude\\DSUGamePortal",
     status: "연결됨",
     tags: ["Game", "Publishing", "FastAPI"],
+  },
+  {
+    id: "equipment-management",
+    name: "VFX EquipRent",
+    description:
+      "영화·VFX 실습 장비의 재고를 확인하고 대여·반납과 관리자 업무를 처리하는 장비 관리 시스템입니다.",
+    category: "commercial",
+    icon: "EQ",
+    href: "http://localhost:8000",
+    publicHref: "http://equipment.arfab.kr",
+    source: "F:\\Create with Claude\\EquipmentManagement",
+    status: "연결됨",
+    tags: ["Equipment", "Rental", "Flask"],
   },
 ];
 
@@ -150,8 +164,11 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                   onClick={(event) => {
-                    if (window.location.hostname === "portal.arfab.kr") {
-                      event.currentTarget.href = "http://dsu.arfab.kr";
+                    if (
+                      window.location.hostname === "portal.arfab.kr" &&
+                      solution.publicHref
+                    ) {
+                      event.currentTarget.href = solution.publicHref;
                     }
                   }}
                 >
