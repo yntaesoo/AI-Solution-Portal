@@ -37,15 +37,28 @@ pause
 exit /b 1
 
 :READY
+netstat -ano | findstr ":5173" | findstr "LISTENING" >nul
+if not errorlevel 1 goto ARFAB_READY
+echo Starting ARFab internal service...
+start "ARFab Internal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_arfab_service.bat"
+
+:ARFAB_READY
 echo Starting DSU Game Portal service...
 start "DSU Game Portal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_dsu_service.bat"
 
 echo Starting AI Solution Portal...
 start "AI Solution Portal Server" /min cmd.exe /c call "%PORTAL_DIR%_start_portal_service.bat"
 
+netstat -ano | findstr ":80 " | findstr "LISTENING" >nul
+if not errorlevel 1 goto GATEWAY_READY
+echo Starting ARFab central gateway...
+timeout /t 4 /nobreak >nul
+start "ARFab Central Gateway" /min cmd.exe /c call "%PORTAL_DIR%gateway\start_gateway.bat"
+
+:GATEWAY_READY
 echo Opening AI Solution Portal...
 timeout /t 7 /nobreak >nul
-start "" "http://localhost:3000"
+start "" "http://portal.arfab.kr"
 
 echo Portal started successfully.
 echo Select Project, then open DSU Game Portal.
