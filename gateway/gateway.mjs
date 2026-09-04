@@ -28,6 +28,13 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Auto-redirect /b-bridge (without trailing slash) to /b-bridge/ to prevent Vite fallback warning
+  if (hostname === "portal.arfab.kr" && req.url.toLowerCase() === "/b-bridge") {
+    res.writeHead(301, { "Location": "/b-bridge/" });
+    res.end();
+    return;
+  }
+
   const forwardedHeaders = {
     ...req.headers,
     "x-forwarded-host": req.headers.host,
@@ -35,11 +42,43 @@ const server = http.createServer((req, res) => {
     "x-forwarded-for": req.socket.remoteAddress || "",
   };
 
+  let targetHost = route.host;
+  let targetPort = route.port;
+  let targetPath = req.url;
+
+  if (hostname === "portal.arfab.kr" && req.url.startsWith("/api/md2html/")) {
+    targetHost = "127.0.0.1";
+    targetPort = 8090;
+    targetPath = req.url.replace("/api/md2html/", "/api/");
+  } else if (hostname === "portal.arfab.kr" && req.url.startsWith("/api/mdconversion/")) {
+    targetHost = "127.0.0.1";
+    targetPort = 8089;
+    targetPath = req.url.replace("/api/mdconversion/", "/");
+  } else if (hostname === "portal.arfab.kr" && req.url.toLowerCase().startsWith("/startupclub")) {
+    targetHost = "127.0.0.1";
+    targetPort = 3004;
+  } else if (hostname === "portal.arfab.kr" && req.url.toLowerCase().startsWith("/b-bridge")) {
+    targetHost = "127.0.0.1";
+    targetPort = 3005;
+  } else if (hostname === "portal.arfab.kr" && req.url.toLowerCase().startsWith("/chatbotrag")) {
+    targetHost = "127.0.0.1";
+    targetPort = 8003;
+  } else if (hostname === "bbridge.arfab.kr" || hostname === "b-bridge.arfab.kr") {
+    targetHost = "127.0.0.1";
+    targetPort = 3005;
+    if (!targetPath.toLowerCase().startsWith("/b-bridge")) {
+      targetPath = "/b-bridge" + (targetPath.startsWith("/") ? targetPath : "/" + targetPath);
+    }
+  } else if (route.apiPort && req.url.startsWith("/api/")) {
+    targetHost = "127.0.0.1";
+    targetPort = route.apiPort;
+  }
+
   const proxyReq = http.request(
     {
-      hostname: route.host,
-      port: route.port,
-      path: req.url,
+      hostname: targetHost,
+      port: targetPort,
+      path: targetPath,
       method: req.method,
       headers: forwardedHeaders,
     },

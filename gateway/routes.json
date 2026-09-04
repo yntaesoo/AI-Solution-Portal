@@ -28,5 +28,57 @@
     "host": "127.0.0.1",
     "port": 8000,
     "name": "VFX Equipment Management"
+  },
+  "mentor.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3001,
+    "name": "Startup Mentor Matching"
+  },
+  "mento.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3001,
+    "name": "Startup Mentor Matching"
+  },
+  "club.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3004,
+    "name": "Startup Club Manager"
+  },
+  "startupclub.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3004,
+    "name": "Startup Club Manager"
+  },
+  "md2html.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3003,
+    "apiPort": 8090,
+    "name": "MD2HTMLDOCPDF Converter"
+  },
+  "mdconversion.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3002,
+    "apiPort": 8089,
+    "name": "MD Document Converter"
+  },
+  "bbridge.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3005,
+    "name": "B-Bridge Network"
+  },
+  "b-bridge.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 3005,
+    "name": "B-Bridge Network"
+  },
+  "chatbot.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 8002,
+    "name": "Live2D ChatBot"
+  },
+  "chatbotrag.arfab.kr": {
+    "host": "127.0.0.1",
+    "port": 8003,
+    "name": "ChatBot with RAG"
   }
 }

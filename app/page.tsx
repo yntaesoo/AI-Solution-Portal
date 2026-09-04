@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 const categories = [
   { id: "all", label: "전체", icon: "✦" },
@@ -49,6 +49,20 @@ const solutions = [
     source: "F:\\Create with Claude\\OCR",
     status: "연결됨",
     tags: ["OCR", "Document AI", "FastAPI"],
+    disabled: true, // 보안상 비활성화 설정 (나중에 해제하려면 이 줄을 지우거나 false로 수정)
+  },
+  {
+    id: "chatbot-with-rag",
+    name: "ChatBot with RAG",
+    description:
+      "기관 맞춤형 RAG를 기반으로 지식 문서를 학습하여 답변하고, 4K 실사 AI 아바타(HeyGen)와 대화하는 안내원 시스템입니다.",
+    category: "commercial",
+    icon: "CR",
+    href: "http://localhost:8003",
+    publicHref: "http://chatbotrag.arfab.kr",
+    source: "H:\\Create with Anti\\ChatBot based on RAG",
+    status: "연결됨",
+    tags: ["ChatBot", "RAG", "HeyGen", "AI Human"],
   },
   {
     id: "live2d-chatbot",
@@ -58,15 +72,109 @@ const solutions = [
     category: "commercial",
     icon: "CB",
     href: "http://localhost:8002",
+    publicHref: "http://chatbot.arfab.kr",
     source: "F:\\Create with Claude\\ChatBot",
     status: "연결됨",
     tags: ["ChatBot", "RAG", "Live2D"],
+  },
+  {
+    id: "mentor-matching",
+    name: "창업멘토 매칭시스템",
+    description:
+      "창업가와 전문 멘토를 매칭하여 피드백과 코칭을 제공하고 멘토링 매칭 현황을 관리하는 창업지원 시스템입니다.",
+    category: "startup",
+    icon: "MT",
+    href: "http://localhost:3001",
+    publicHref: "http://mentor.arfab.kr",
+    source: "H:\\Create with Codex\\창업관련\\창업멘토매칭시스템",
+    status: "연결됨",
+    tags: ["Startup", "Mentor", "Next.js"],
+  },
+  {
+    id: "startup-club",
+    name: "유학생 창업동아리 관리",
+    description:
+      "유학생 창업동아리의 소속원 정보, 의무 활동 이력, 사업비 예산현황 및 멘토 일지를 통합 관리하는 창업지원 시스템입니다.",
+    category: "startup",
+    icon: "SC",
+    href: "http://localhost:3004",
+    publicHref: "http://club.arfab.kr",
+    source: "H:\\Create with Codex\\창업관련\\유학생창업동아리\\startup-club-manager",
+    status: "연결됨",
+    tags: ["Startup", "Club", "Next.js"],
+  },
+  {
+    id: "b-bridge",
+    name: "유학생 정주지원 B-Bridge",
+    description:
+      "부산형 RISE 사업 연계 동서대학교 외국인 유학생 정주지원 및 지산학협의체 60개 참여기업 통합 정보시스템입니다.",
+    category: "startup",
+    icon: "BB",
+    href: "http://localhost:3005/b-bridge/",
+    publicHref: "http://bbridge.arfab.kr",
+    source: "H:\\Create with Anti\\B-Bridge",
+    status: "연결됨",
+    tags: ["RISE", "B-Bridge", "유학생정주", "React"],
+  },
+  {
+    id: "md-conversion",
+    name: "MD문서 변환기",
+    description:
+      "PDF, DOCX, PPTX, XLSX, HWPX 문서를 고품질 Markdown으로 변환하고 표와 이미지를 추출·편집하는 도구입니다.",
+    category: "idea",
+    icon: "MD",
+    href: "/mdconversion",
+    publicHref: "/mdconversion",
+    source: "H:\\Create with Codex\\Idea2Real\\MDConversion",
+    status: "연결됨",
+    tags: ["Markdown", "Converter", "FastAPI", "React"],
+  },
+  {
+    id: "md-to-html-docx-pdf",
+    name: "MD2HTMLDOCPDF 변환기",
+    description:
+      "Markdown 파일을 드래그앤 드롭하여 고품질 HTML, DOCX, PDF 파일로 변환하는 도구입니다.",
+    category: "idea",
+    icon: "MP",
+    href: "/md2html",
+    publicHref: "/md2html",
+    source: "H:\\Create with Codex\\Idea2Real\\MD2HTMLDOCPDF",
+    status: "연결됨",
+    tags: ["Markdown", "HTML", "DOCX", "PDF"],
   },
 ];
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [query, setQuery] = useState("");
+  const [statuses, setStatuses] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    // Ping all solutions in parallel to check live status
+    solutions.forEach(async (solution) => {
+      if (solution.disabled) return;
+      
+      const pingUrl = solution.publicHref
+        ? (solution.publicHref.startsWith("http") ? solution.publicHref : window.location.origin + solution.publicHref)
+        : solution.href;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        
+        // Fetch in HEAD mode with no-cors to safely check port binding
+        await fetch(pingUrl, {
+          method: "HEAD",
+          mode: "no-cors",
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        setStatuses(prev => ({ ...prev, [solution.id]: "연결됨" }));
+      } catch (err) {
+        setStatuses(prev => ({ ...prev, [solution.id]: "서버 꺼짐" }));
+      }
+    });
+  }, []);
 
   const visibleSolutions = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -163,15 +271,26 @@ export default function Home() {
 
         <div className="solution-grid">
           {visibleSolutions.map((solution) => (
-            <article className="solution-card" key={solution.id}>
+            <article className="solution-card" key={solution.id} style={solution.disabled ? { opacity: 0.75 } : undefined}>
               <div className="card-top">
-                <div className="solution-icon" aria-hidden="true">
+                <div className="solution-icon" aria-hidden="true" style={solution.disabled ? { background: "#66736e" } : undefined}>
                   <span>{solution.icon}</span>
                 </div>
-                <span className="status"><i />{solution.status}</span>
+                <span className="status">
+                  <i style={
+                    solution.disabled 
+                      ? { background: "#a83a3a", boxShadow: "0 0 0 3px #f2dfdf" }
+                      : (statuses[solution.id] === "서버 꺼짐" 
+                          ? { background: "#a83a3a", boxShadow: "0 0 0 3px #f2dfdf" }
+                          : { background: "#2ecc71", boxShadow: "0 0 0 3px #e8f8f5" })
+                  } />
+                  {solution.disabled 
+                    ? "보안 제한" 
+                    : (statuses[solution.id] || "확인 중...")}
+                </span>
               </div>
               <div className="card-body">
-                <p className="category-kicker">프로젝트 · 사업화</p>
+                <p className="category-kicker">{categories.find(c => c.id === solution.category)?.label || "기타"}</p>
                 <h3>{solution.name}</h3>
                 <p>{solution.description}</p>
                 <div className="tags">
@@ -181,23 +300,42 @@ export default function Home() {
               <div className="card-footer">
                 <div>
                   <small>LOCAL SOURCE</small>
-                  <span title={solution.source}>DSUGamePortal</span>
+                  <span title={solution.source}>{solution.source.split('\\').pop() || solution.source.split('/').pop()}</span>
                 </div>
-                <a
-                  href={solution.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(event) => {
-                    if (
-                      window.location.hostname === "portal.arfab.kr" &&
-                      solution.publicHref
-                    ) {
-                      event.currentTarget.href = solution.publicHref;
-                    }
-                  }}
-                >
-                  포털 열기 <span>↗</span>
-                </a>
+                {solution.disabled ? (
+                  <button
+                    type="button"
+                    disabled
+                    style={{
+                      padding: "8px 9px",
+                      borderRadius: "8px",
+                      color: "#f4f4ef",
+                      background: "#c0c9c5",
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      cursor: "not-allowed",
+                      border: 0,
+                    }}
+                  >
+                    실행 제한
+                  </button>
+                ) : (
+                  <a
+                    href={solution.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(event) => {
+                      if (
+                        window.location.hostname === "portal.arfab.kr" &&
+                        solution.publicHref
+                      ) {
+                        event.currentTarget.href = solution.publicHref;
+                      }
+                    }}
+                  >
+                    포털 열기 <span>↗</span>
+                  </a>
+                )}
               </div>
             </article>
           ))}

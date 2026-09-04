@@ -1,0 +1,15 @@
+127.0.0.1 localhost
+::1 localhost
+127.0.0.1 arfab.kr
+127.0.0.1 www.arfab.kr
+127.0.0.1 portal.arfab.kr
+127.0.0.1 dsu.arfab.kr
+127.0.0.1 equipment.arfab.kr
+127.0.0.1 mentor.arfab.kr
+127.0.0.1 mento.arfab.kr
+127.0.0.1 md2html.arfab.kr
+127.0.0.1 mdconversion.arfab.kr
+127.0.0.1 bbridge.arfab.kr
+127.0.0.1 b-bridge.arfab.kr
+127.0.0.1 chatbot.arfab.kr
+127.0.0.1 chatbotrag.arfab.kr
