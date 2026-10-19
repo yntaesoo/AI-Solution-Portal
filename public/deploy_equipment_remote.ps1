@@ -14,13 +14,13 @@ $portalDir = "C:\ARFabServices\AI솔루션포털"
 $zipSource = "$portalDir\public\equipment_booking_system.zip"
 $fallbackZipUrl = "https://raw.githubusercontent.com/yntaesoo/AI-Solution-Portal/main/public/equipment_booking_system.zip"
 
-# 1. 기존 8000번 포트 (구버전 Flask) 프로세스 종료
+# 1. 기존 8000번 포트 (구버전 Flask) 프로세스 종료 (다른 서비스 영향 방지 위해 특정 PID만 종료)
 Write-Host "[1/6] 기존 8000번 포트(구버전 장비관리) 프로세스 종료 중..." -ForegroundColor Yellow
 $pids = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
 foreach ($p in $pids) {
     if ($p -and $p -ne 0) {
-        Write-Host "  -> 프로세스 PID $p 강제 종료..." -ForegroundColor Gray
-        cmd /c "taskkill /f /pid $p /t >nul 2>&1"
+        Write-Host "  -> 프로세스 PID $p 종료..." -ForegroundColor Gray
+        cmd /c "taskkill /f /pid $p >nul 2>&1"
     }
 }
 
@@ -58,20 +58,33 @@ if (!(Test-Path "$destDir\node_modules")) {
 }
 cmd /c "npx prisma generate"
 
-# 6. 서비스 구동 및 헬스체크
-Write-Host "[6/6] Next.js 8000번 포트 백그라운드 서비스 기동..." -ForegroundColor Yellow
+# 6. 서비스 구동 (8000번 장비 및 3000번 포털 동시 보장)
+Write-Host "[6/6] 서비스 기동 및 상태 보장 중..." -ForegroundColor Yellow
 Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run start" -WorkingDirectory $destDir -WindowStyle Hidden
 
-Start-Sleep -Seconds 4
-$checkPort = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
-if ($checkPort) {
-    Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Green
-    Write-Host "🎉 203.241.190.58 서버 배포 및 서비스 기동 성공!" -ForegroundColor Green
-    Write-Host "   - 로컬 테스트: http://localhost:8000" -ForegroundColor Green
-    Write-Host "   - 포털 도메인: http://equipment.arfab.kr" -ForegroundColor Green
-    Write-Host "   - 통합 포털:   http://portal.arfab.kr" -ForegroundColor Green
-    Write-Host "========================================================" -ForegroundColor Green
-} else {
-    Write-Host "[주의] 8000번 포트 감지 대기 중입니다. 잠시 후 http://localhost:8000 접속을 확인해 주세요." -ForegroundColor Yellow
+# 포털 서비스 (3000번) 가동 여부 점검 및 필요 시 자동 기동
+$p3000 = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue
+if (!$p3000) {
+    Write-Host "  -> 포털 서비스(3000번) 기동 중..." -ForegroundColor Gray
+    if (Test-Path "$portalDir\_start_portal_service.bat") {
+        Start-Process -FilePath "cmd.exe" -ArgumentList "/c call `"$portalDir\_start_portal_service.bat`"" -WorkingDirectory $portalDir -WindowStyle Hidden
+    } else {
+        Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run dev" -WorkingDirectory $portalDir -WindowStyle Hidden
+    }
 }
+
+# 게이트웨이 (80번) 가동 여부 점검
+$p80 = Get-NetTCPConnection -LocalPort 80 -ErrorAction SilentlyContinue
+if (!$p80) {
+    Write-Host "  -> 게이트웨이(80번) 기동 중..." -ForegroundColor Gray
+    Start-Process -FilePath "cmd.exe" -ArgumentList "/c node `"$portalDir\gateway\gateway.mjs`"" -WorkingDirectory "$portalDir\gateway" -WindowStyle Hidden
+}
+
+Start-Sleep -Seconds 5
+
+Write-Host ""
+Write-Host "========================================================" -ForegroundColor Green
+Write-Host "🎉 203.241.190.58 서버 배포 및 서비스 점검 완료!" -ForegroundColor Green
+Write-Host "   - 포털 메인:   http://portal.arfab.kr" -ForegroundColor Green
+Write-Host "   - 장비 시스템: http://equipment.arfab.kr" -ForegroundColor Green
+Write-Host "========================================================" -ForegroundColor Green
