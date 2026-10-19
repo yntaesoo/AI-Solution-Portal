@@ -1,5 +1,10 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
+import { existsSync } from "node:fs";
+
+const equipmentDir = existsSync("H:\\Create with Anti\\EquipmentBookingSystem")
+  ? "H:\\Create with Anti\\EquipmentBookingSystem"
+  : "C:\\ARFabServices\\EquipmentBookingSystem";
 
 const services = [
   {
@@ -18,9 +23,9 @@ const services = [
   },
   {
     name: "equipment_service",
-    cwd: "F:\\Create with Claude\\EquipmentManagement\\backend",
-    cmd: "F:\\Create with Claude\\EquipmentManagement\\venv\\Scripts\\python.exe",
-    args: ["-c", "from main import app; app.run(host='127.0.0.1', port=8000, debug=False)"],
+    cwd: equipmentDir,
+    cmd: "node",
+    args: ["node_modules/next/dist/bin/next", "start", "-H", "0.0.0.0", "-p", "8000"],
     shell: false
   },
   {

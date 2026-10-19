@@ -35,6 +35,14 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Auto-redirect /equipment on portal.arfab.kr to equipment.arfab.kr
+  if (hostname === "portal.arfab.kr" && (req.url.toLowerCase() === "/equipment" || req.url.toLowerCase().startsWith("/equipment/"))) {
+    const subPath = req.url.slice("/equipment".length) || "/";
+    res.writeHead(302, { "Location": `http://equipment.arfab.kr${subPath}` });
+    res.end();
+    return;
+  }
+
   const forwardedHeaders = {
     ...req.headers,
     "x-forwarded-host": req.headers.host,

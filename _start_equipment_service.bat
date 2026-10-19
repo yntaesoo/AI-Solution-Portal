@@ -1,3 +1,7 @@
 @echo off
-cd /d "F:\Create with Claude\EquipmentManagement\backend"
-call "..\venv\Scripts\python.exe" -c "from main import app; app.run(host='127.0.0.1', port=8000, debug=False)"
+if exist "H:\Create with Anti\EquipmentBookingSystem" (
+    cd /d "H:\Create with Anti\EquipmentBookingSystem"
+) else (
+    cd /d "C:\ARFabServices\EquipmentBookingSystem"
+)
+call "C:\Program Files\nodejs\npm.cmd" run start > "%~dp0_equipment.log" 2>&1

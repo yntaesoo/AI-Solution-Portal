@@ -27,16 +27,16 @@ const solutions = [
   },
   {
     id: "equipment-management",
-    name: "VFX EquipRent",
+    name: "동서대 장비예약 시스템 (VFX EquipRent)",
     description:
-      "영화·VFX 실습 장비의 재고를 확인하고 대여·반납과 관리자 업무를 처리하는 장비 관리 시스템입니다.",
+      "영화·영상·VFX 실습 장비 카탈로그 검색, 학생 온라인 대여 신청, 교수 승인, 관리자 출납을 지원하는 통합 장비 예약 시스템입니다.",
     category: "commercial",
     icon: "EQ",
     href: "http://localhost:8000",
     publicHref: "http://equipment.arfab.kr",
-    source: "F:\\Create with Claude\\EquipmentManagement",
+    source: "H:\\Create with Anti\\EquipmentBookingSystem",
     status: "연결됨",
-    tags: ["Equipment", "Rental", "Flask"],
+    tags: ["Equipment", "Booking", "Next.js", "QR"],
   },
   {
     id: "army-ocr",
