@@ -13,3 +13,5 @@
 127.0.0.1 b-bridge.arfab.kr
 127.0.0.1 chatbot.arfab.kr
 127.0.0.1 chatbotrag.arfab.kr
+127.0.0.1 minutes.arfab.kr
+127.0.0.1 anchor.arfab.kr

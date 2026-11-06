@@ -43,6 +43,27 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Auto-redirect /minutes or /anchor on portal.arfab.kr or IP to minutes.arfab.kr
+  if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && 
+      (req.url.toLowerCase() === "/minutes" || req.url.toLowerCase().startsWith("/minutes/") ||
+       req.url.toLowerCase() === "/anchor" || req.url.toLowerCase().startsWith("/anchor/"))) {
+    const isAnchor = req.url.toLowerCase().startsWith("/anchor");
+    const prefix = isAnchor ? "/anchor" : "/minutes";
+    const subPath = req.url.slice(prefix.length) || "/";
+    res.writeHead(302, { "Location": `http://minutes.arfab.kr${subPath}` });
+    res.end();
+    return;
+  }
+
+  // Auto-redirect /chatbotrag on portal.arfab.kr or IP to chatbotrag.arfab.kr
+  if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && 
+      (req.url.toLowerCase() === "/chatbotrag" || req.url.toLowerCase().startsWith("/chatbotrag/"))) {
+    const subPath = req.url.slice("/chatbotrag".length) || "/";
+    res.writeHead(302, { "Location": `http://chatbotrag.arfab.kr${subPath}` });
+    res.end();
+    return;
+  }
+
   const forwardedHeaders = {
     ...req.headers,
     "x-forwarded-host": req.headers.host,
@@ -68,9 +89,10 @@ const server = http.createServer((req, res) => {
   } else if (hostname === "portal.arfab.kr" && req.url.toLowerCase().startsWith("/b-bridge")) {
     targetHost = "127.0.0.1";
     targetPort = 3005;
-  } else if (hostname === "portal.arfab.kr" && req.url.toLowerCase().startsWith("/chatbotrag")) {
+  } else if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && req.url.toLowerCase().startsWith("/chatbotrag")) {
     targetHost = "127.0.0.1";
     targetPort = 8003;
+    targetPath = req.url.replace(/^\/chatbotrag/i, "") || "/";
   } else if (hostname === "bbridge.arfab.kr" || hostname === "b-bridge.arfab.kr") {
     targetHost = "127.0.0.1";
     targetPort = 3005;

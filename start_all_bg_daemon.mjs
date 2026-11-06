@@ -6,6 +6,14 @@ const equipmentDir = existsSync("H:\\Create with Anti\\EquipmentBookingSystem")
   ? "H:\\Create with Anti\\EquipmentBookingSystem"
   : "C:\\ARFabServices\\EquipmentBookingSystem";
 
+const minutesDir = existsSync("H:\\Create with Anti\\앵커사업\\회의록작성")
+  ? "H:\\Create with Anti\\앵커사업\\회의록작성"
+  : "C:\\ARFabServices\\회의록작성";
+
+const chatbotragDir = existsSync("H:\\Create with Anti\\ChatBot based on RAG")
+  ? "H:\\Create with Anti\\ChatBot based on RAG"
+  : "C:\\ARFabServices\\ChatBot based on RAG";
+
 const services = [
   {
     name: "arfab_service",
@@ -40,6 +48,20 @@ const services = [
     cwd: "F:\\Create with Claude\\ChatBot\\backend",
     cmd: "F:\\Create with Claude\\ChatBot\\backend\\.venv\\Scripts\\python.exe",
     args: ["-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8002"],
+    shell: false
+  },
+  {
+    name: "chatbotrag_service",
+    cwd: chatbotragDir,
+    cmd: "C:\\Users\\yntae\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    args: ["-u", "server.py"],
+    shell: false
+  },
+  {
+    name: "minutes_service",
+    cwd: minutesDir,
+    cmd: "C:\\Users\\yntae\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    args: ["-u", "server.py", "--port", "8005"],
     shell: false
   },
   {
@@ -104,9 +126,12 @@ console.log("=== ARFab Web Services Daemon Manager ===");
 
 const children = {};
 
-for (const svc of services) {
+function startService(svc) {
+  if (!existsSync(svc.cwd)) {
+    console.log(`[DAEMON WARNING] Directory does not exist: ${svc.cwd} for ${svc.name}. Skipping.`);
+    return;
+  }
   console.log(`Spawning daemon process: ${svc.name} in ${svc.cwd}...`);
-  
   const child = spawn(svc.cmd, svc.args, {
     cwd: svc.cwd,
     detached: true,
@@ -114,20 +139,27 @@ for (const svc of services) {
     windowsHide: true,
     shell: svc.shell
   });
-  
+
   children[svc.name] = {
     pid: child.pid,
     process: child
   };
-  
+
   child.on("exit", (code, signal) => {
-    console.log(`[DAEMON ERROR] Service "${svc.name}" (PID ${child.pid}) exited with code ${code} and signal ${signal}`);
+    console.log(`[DAEMON ERROR] Service "${svc.name}" (PID ${child.pid}) exited with code ${code}. Respawning in 3 seconds...`);
+    setTimeout(() => {
+      startService(svc);
+    }, 3000);
   });
-  
+
   child.unref();
 }
 
-console.log("All child services successfully spawned and detached!");
+for (const svc of services) {
+  startService(svc);
+}
+
+console.log("All child services successfully spawned with auto-respawn watchdog!");
 
 // Keep the daemon process running indefinitely
 setInterval(() => {

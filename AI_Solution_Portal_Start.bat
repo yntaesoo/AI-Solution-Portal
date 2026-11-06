@@ -100,6 +100,14 @@ start "" /b cmd.exe /c "%PORTAL_DIR%_start_chatbotrag_service.bat"
 ping 127.0.0.1 -n 3 >nul
 
 :CHATBOTRAG_READY
+:: 5c. Anchor Meeting Minutes AI
+netstat -ano | findstr ":8005" | findstr "LISTENING" >nul
+if not errorlevel 1 goto MINUTES_READY
+echo Starting Anchor Meeting Minutes AI service...
+start "" /b cmd.exe /c "%PORTAL_DIR%_start_minutes_service.bat"
+ping 127.0.0.1 -n 3 >nul
+
+:MINUTES_READY
 :: 6. Startup Mentor Matching
 netstat -ano | findstr ":3001" | findstr "LISTENING" >nul
 if not errorlevel 1 goto MENTOR_READY

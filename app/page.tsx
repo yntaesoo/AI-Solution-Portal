@@ -58,7 +58,7 @@ const solutions = [
       "기관 맞춤형 RAG를 기반으로 지식 문서를 학습하여 답변하고, 4K 실사 AI 아바타(HeyGen)와 대화하는 안내원 시스템입니다.",
     category: "commercial",
     icon: "CR",
-    href: "http://localhost:8003",
+    href: "http://chatbotrag.arfab.kr",
     publicHref: "http://chatbotrag.arfab.kr",
     source: "H:\\Create with Anti\\ChatBot based on RAG",
     status: "연결됨",
@@ -141,6 +141,19 @@ const solutions = [
     source: "H:\\Create with Codex\\Idea2Real\\MD2HTMLDOCPDF",
     status: "연결됨",
     tags: ["Markdown", "HTML", "DOCX", "PDF"],
+  },
+  {
+    id: "anchor-meeting-minutes",
+    name: "동서대 앵커사업단 회의록 자동 작성기",
+    description:
+      "과제별 회의정보, 영수증 스마트 OCR, 카드내역 매칭, 계획서 기반 AI 토의내용 자동 작성을 통해 회의록·참석자명부·영수증첨부철을 원클릭 HWP로 생성하는 솔루션입니다.",
+    category: "idea",
+    icon: "MM",
+    href: "http://localhost:8005",
+    publicHref: "http://minutes.arfab.kr",
+    source: "H:\\Create with Anti\\앵커사업\\회의록작성",
+    status: "연결됨",
+    tags: ["Anchor", "Meeting Minutes", "HWP", "FastAPI", "OCR", "AI"],
   },
 ];
 
