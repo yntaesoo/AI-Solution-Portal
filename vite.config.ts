@@ -49,6 +49,9 @@ export default defineConfig(async () => {
       port: 3000,
       strictPort: true,
       allowedHosts: ["localhost", "portal.arfab.kr"],
+      hmr: {
+        overlay: false,
+      },
       watch: {
         ignored: ["**/public/*.zip", "**/*.zip"],
         ...(isCodexSeatbeltSandbox

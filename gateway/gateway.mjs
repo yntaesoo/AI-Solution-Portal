@@ -64,6 +64,40 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Auto-redirect /startupclub or /club on portal.arfab.kr or IP to club.arfab.kr
+  if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && 
+      (req.url.toLowerCase() === "/startupclub" || req.url.toLowerCase().startsWith("/startupclub/") ||
+       req.url.toLowerCase() === "/club" || req.url.toLowerCase().startsWith("/club/"))) {
+    const isClub = req.url.toLowerCase().startsWith("/club");
+    const prefix = isClub ? "/club" : "/startupclub";
+    const subPath = req.url.slice(prefix.length) || "";
+    const targetPath = subPath.toLowerCase().startsWith("/startupclub") ? subPath : `/StartupClub${subPath}`;
+    res.writeHead(302, { "Location": `http://club.arfab.kr${targetPath}` });
+    res.end();
+    return;
+  }
+
+  // Auto-redirect /mentor or /mento on portal.arfab.kr or IP to mentor.arfab.kr
+  if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && 
+      (req.url.toLowerCase() === "/mentor" || req.url.toLowerCase().startsWith("/mentor/") ||
+       req.url.toLowerCase() === "/mento" || req.url.toLowerCase().startsWith("/mento/"))) {
+    const isMentor = req.url.toLowerCase().startsWith("/mentor");
+    const prefix = isMentor ? "/mentor" : "/mento";
+    const subPath = req.url.slice(prefix.length) || "/";
+    res.writeHead(302, { "Location": `http://mentor.arfab.kr${subPath}` });
+    res.end();
+    return;
+  }
+
+  // Auto-redirect /dsu on portal.arfab.kr or IP to dsu.arfab.kr
+  if ((hostname === "portal.arfab.kr" || hostname === "203.241.190.58" || hostname === "arfab.kr" || hostname === "www.arfab.kr") && 
+      (req.url.toLowerCase() === "/dsu" || req.url.toLowerCase().startsWith("/dsu/"))) {
+    const subPath = req.url.slice("/dsu".length) || "/";
+    res.writeHead(302, { "Location": `http://dsu.arfab.kr${subPath}` });
+    res.end();
+    return;
+  }
+
   const forwardedHeaders = {
     ...req.headers,
     "x-forwarded-host": req.headers.host,
@@ -98,6 +132,12 @@ const server = http.createServer((req, res) => {
     targetPort = 3005;
     if (!targetPath.toLowerCase().startsWith("/b-bridge")) {
       targetPath = "/b-bridge" + (targetPath.startsWith("/") ? targetPath : "/" + targetPath);
+    }
+  } else if (hostname === "club.arfab.kr" || hostname === "startupclub.arfab.kr") {
+    targetHost = "127.0.0.1";
+    targetPort = 3004;
+    if (!targetPath.toLowerCase().startsWith("/startupclub")) {
+      targetPath = "/StartupClub" + (targetPath.startsWith("/") ? targetPath : "/" + targetPath);
     }
   } else if (route.apiPort && req.url.startsWith("/api/")) {
     targetHost = "127.0.0.1";

@@ -97,8 +97,8 @@ const solutions = [
       "유학생 창업동아리의 소속원 정보, 의무 활동 이력, 사업비 예산현황 및 멘토 일지를 통합 관리하는 창업지원 시스템입니다.",
     category: "startup",
     icon: "SC",
-    href: "http://localhost:3004",
-    publicHref: "http://club.arfab.kr",
+    href: "http://localhost:3004/StartupClub",
+    publicHref: "http://club.arfab.kr/StartupClub",
     source: "H:\\Create with Codex\\창업관련\\유학생창업동아리\\startup-club-manager",
     status: "연결됨",
     tags: ["Startup", "Club", "Next.js"],
@@ -334,7 +334,7 @@ export default function Home() {
                   </button>
                 ) : (
                   <a
-                    href={solution.href}
+                    href={solution.publicHref || solution.href}
                     target="_blank"
                     rel="noreferrer"
                     onClick={(event) => {
